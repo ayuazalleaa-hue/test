@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .player {
+      position: relative;
+      width: 100vw;
+      max-width: 960px;
+      background: #000;
+      cursor: pointer;
+    }
+    .thumbnail {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #111;
+      position: relative;
+      overflow: hidden;
+    }
+    .thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .center-play {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 68px;
+      height: 68px;
+      background: rgba(0,0,0,0.6);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(255,255,255,0.8);
+      transition: background 0.2s, transform 0.2s;
+      z-index: 5;
+    }
+    .center-play:hover {
+      background: rgba(255,0,0,0.8);
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+    .center-play svg { margin-left: 5px; }
+    .gradient-overlay {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%; height: 80px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.8));
+      pointer-events: none;
+    }
+    .controls {
+      background: #000;
+      padding: 0 10px 8px;
+    }
+    .progress-wrap {
+      width: 100%;
+      height: 18px;
+      display: flex;
+      align-items: center;
+    }
+    .progress-track {
+      width: 100%;
+      height: 3px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+      position: relative;
+      transition: height 0.1s;
+    }
+    .progress-wrap:hover .progress-track { height: 5px; }
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: #f00;
+      border-radius: 2px;
+      position: relative;
+    }
+    .progress-thumb {
+      position: absolute;
+      right: -6px; top: 50%;
+      transform: translateY(-50%);
+      width: 12px; height: 12px;
+      background: #f00;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+    .progress-wrap:hover .progress-thumb { opacity: 1; }
+    .bottom-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 4px;
+    }
+    .icon-btn {
+      background: none; border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      padding: 4px;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+    .icon-btn:hover { background: rgba(255,255,255,0.1); }
+    .time-display {
+      color: #fff;
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      white-space: nowrap;
+    }
+    .spacer { flex: 1; }
+    .vol-wrap { display: flex; align-items: center; gap: 4px; }
+    .vol-slider {
+      width: 60px; height: 3px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+    }
+    .vol-fill {
+      width: 80%; height: 100%;
+      background: #fff;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+<div class="player" onclick="triggerPPC()">
+  <div class="thumbnail">
+ <video 
+  src="https://cdn2.videy.co/CRQz32J91.mp4"
+  style="width:100%; height:100%; object-fit:cover; pointer-events:none;"
+  playsinline
+  preload="metadata"
+></video>
+  <div class="gradient-overlay"></div>
+  <div class="center-play">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+      <polygon points="5,3 19,12 5,21"/>
+    </svg>
+  </div>
+</div>
+  <div class="controls">
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-fill">
+          <div class="progress-thumb"></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-row">
+      <button class="icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+          <polygon points="5,3 19,12 5,21"/>
+        </svg>
+      </button>
+      <div class="vol-wrap">
+        <button class="icon-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+            <polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/>
+            <path d="M15.54,8.46a5,5,0,0,1,0,7.07" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M19.07,4.93a10,10,0,0,1,0,14.14" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="vol-slider"><div class="vol-fill"></div></div>
+      </div>
+      <!-- GANTI DURASI DI SINI: ubah 08:30 -->
+      <div class="time-display">0:00 / 16:14</div>
+      <div class="spacer"></div>
+      <button class="icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="white" stroke-width="2" fill="none"/>
+        </svg>
+      </button>
+      <button class="icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2" fill="none">
+          <polyline points="15,3 21,3 21,9"/>
+          <polyline points="9,21 3,21 3,15"/>
+          <line x1="21" y1="3" x2="14" y2="10"/>
+          <line x1="3" y1="21" x2="10" y2="14"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+<script>
+  function triggerPPC() {
+    window.location.href = 'https://omg10.com/4/10817992';
+  }
+</script>
+</body>
+</html>
